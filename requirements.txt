@@ -1,0 +1,10 @@
+Flask
+flask-cors
+flask-socketio
+opencv-python
+numpy
+deepface
+pandas
+scikit-learn
+nltk
+scipy
