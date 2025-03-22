@@ -1,22 +1,19 @@
 from flask import Flask, request, jsonify, Blueprint
 import os
 from groclake.cataloglake import CatalogLake
-from groclake.modellake import ModelLake  # Add this import
+from groclake.modellake import ModelLake
 from flask_cors import CORS
 
 chat_bot = Blueprint('chatbot', __name__)
 
-# Environment variable setup
 GROCLAKE_API_KEY = 'a3c65c2974270fd093ee8a9bf8ae7d0b'
 GROCLAKE_ACCOUNT_ID = 'cecf88db41531add5d0cefaa83fedb38'
 os.environ['GROCLAKE_API_KEY'] = GROCLAKE_API_KEY
 os.environ['GROCLAKE_ACCOUNT_ID'] = GROCLAKE_ACCOUNT_ID
 
-# Initialize both CatalogLake and ModelLake instances
 catalog = CatalogLake()
-model_lake = ModelLake()  # Add this line
+model_lake = ModelLake()  
 
-# Chatbot configuration
 CHATBOT_CONFIG = {
     "name": "Well Wise",
     "description": "I am a virtual doctor/therapist here to assist you with medical questions specially mental health",
@@ -33,7 +30,6 @@ CHATBOT_CONFIG = {
     ]
 }
 
-# Store conversation histories for different sessions
 conversation_histories = {}
 
 @chat_bot.route('/api/chat/config', methods=['GET'])
@@ -50,25 +46,21 @@ def chat_message():
         
         if not user_input:
             return jsonify({"error": "Message is required"}), 400
-            
-        # Append user's input to conversation history
+
         conversation_history.append({
             "role": "user",
             "content": user_input
         })
         
-        # Create the payload
         payload = {
             "messages": conversation_history,
             "token_size": 300
         }
         
-        # Get response from model using model_lake instead of catalog
         try:
-            response = model_lake.chat_complete(payload=payload)  # Changed this line
+            response = model_lake.chat_complete(payload=payload) 
             bot_reply = response.get('answer', 'Sorry, I couldn\'t process that.')
-            
-            # Append bot's reply to conversation history
+   
             conversation_history.append({
                 "role": "assistant",
                 "content": bot_reply

@@ -16,7 +16,7 @@ total_blinks = 0
 emotion_counts = {}
 capture_interval = 1
 last_capture_time = None
-start_time = None  # Track start time of the session
+start_time = None  
 
 mp_face_mesh = mp.solutions.face_mesh
 face_mesh = mp_face_mesh.FaceMesh(
@@ -97,7 +97,7 @@ def process_frame():
 @emotion_detection.route('/start_session', methods=['GET'])
 def start_session():
     global cap, processing, blink_counter, total_blinks, last_capture_time, emotion_counts, start_time
-    if processing:  # Prevent starting a session if one is already running
+    if processing:  
         return jsonify({"status": "error", "message": "Session already running"}), 400
     
     cap = cv2.VideoCapture(0)
@@ -110,7 +110,7 @@ def start_session():
     score = 0
     last_capture_time = time.time()
     emotion_counts = {}
-    start_time = time.time()  # Store the start time of the session
+    start_time = time.time()
     threading.Thread(target=process_frame).start()
     return jsonify({"status": "session started"})
 
@@ -124,12 +124,10 @@ def stop_session():
     if cap and cap.isOpened():
         cap.release()
     
-    # Calculate elapsed time in seconds
     elapsed_time = time.time() - start_time
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_file = f"detected_emotion_counts_{timestamp}.json"
-    
-    # Save emotion counts to JSON file
+
     with open(output_file, 'w') as json_file:
         json.dump(emotion_counts, json_file)
 
